@@ -1,0 +1,296 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <variables>
+    <variable id="var_ein_laeuft">einschaltLaeuft</variable>
+    <variable id="var_aus_laeuft">ausschaltLaeuft</variable>
+    <variable type="timeout" id="einschaltTimer">einschaltTimer</variable>
+    <variable type="timeout" id="ausschaltTimer">ausschaltTimer</variable>
+  </variables>
+  <block type="comment" id="comment1" x="-462" y="-637">
+    <field name="COMMENT">DTU Solar Automatisch - traege Reaktion (Ein 90s / Aus 5min verzoegert)</field>
+    <next>
+      <block type="variables_set" id="init1">
+        <field name="VAR" id="var_ein_laeuft">einschaltLaeuft</field>
+        <value name="VALUE">
+          <block type="logic_boolean" id="init1b">
+            <field name="BOOL">FALSE</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="init2">
+            <field name="VAR" id="var_aus_laeuft">ausschaltLaeuft</field>
+            <value name="VALUE">
+              <block type="logic_boolean" id="init2b">
+                <field name="BOOL">FALSE</field>
+              </block>
+            </value>
+            <next>
+              <block type="on_ext" id="trigger1">
+                <mutation xmlns="http://www.w3.org/1999/xhtml" items="1"></mutation>
+                <field name="CONDITION">any</field>
+                <field name="ACK_CONDITION"></field>
+                <value name="OID0">
+                  <shadow type="field_oid" id="oid1">
+                    <field name="oid">0_userdata.0.solar.solar_panele_netzwerk_gesamt</field>
+                  </shadow>
+                </value>
+                <statement name="STATEMENT">
+                  <block type="controls_if" id="if_main">
+                    <mutation else="1"></mutation>
+                    <value name="IF0">
+                      <block type="logic_compare" id="cmp_main">
+                        <field name="OP">GTE</field>
+                        <value name="A">
+                          <block type="get_value" id="gv1">
+                            <field name="ATTR">val</field>
+                            <field name="OID">0_userdata.0.solar.solar_panele_netzwerk_gesamt</field>
+                          </block>
+                        </value>
+                        <value name="B">
+                          <block type="math_number" id="num60a">
+                            <field name="NUM">60</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="timeouts_cleartimeout" id="clear_aus1">
+                        <field name="NAME">ausschaltTimer</field>
+                        <next>
+                          <block type="variables_set" id="reset_aus_flag">
+                            <field name="VAR" id="var_aus_laeuft">ausschaltLaeuft</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="reset_aus_flagb">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="controls_if" id="if_ein_check">
+                                <value name="IF0">
+                                  <block type="logic_compare" id="cmp_ein_check">
+                                    <field name="OP">EQ</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="get_ein_check">
+                                        <field name="VAR" id="var_ein_laeuft">einschaltLaeuft</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="logic_boolean" id="bool_false_check1">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <statement name="DO0">
+                                  <block type="variables_set" id="set_ein_flag">
+                                    <field name="VAR" id="var_ein_laeuft">einschaltLaeuft</field>
+                                    <value name="VALUE">
+                                      <block type="logic_boolean" id="set_ein_flagb">
+                                        <field name="BOOL">TRUE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="timeouts_settimeout" id="timeout_ein">
+                                        <field name="NAME">einschaltTimer</field>
+                                        <field name="DELAY">4</field>
+                                        <field name="UNIT">min</field>
+                                        <statement name="STATEMENT">
+                                          <block type="telegram" id="#r3QGs!;R7=H^89^GkSr">
+                                            <field name="INSTANCE"></field>
+                                            <field name="LOG"></field>
+                                            <field name="SILENT">FALSE</field>
+                                            <field name="PARSEMODE">default</field>
+                                            <field name="ESCAPING">FALSE</field>
+                                            <field name="DISABLE_WEB_PAGE_PREVIEW">FALSE</field>
+                                            <value name="MESSAGE">
+                                              <shadow type="text" id="Y(x|Vf6Fo!-v[6*pOvU^">
+                                                <field name="TEXT">text</field>
+                                              </shadow>
+                                              <block type="get_value" id="J`KE%O0pHK])7hDM~AM{">
+                                                <field name="ATTR">val</field>
+                                                <field name="OID">0_userdata.0.solar.solar_panele_netzwerk_gesamt</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="control" id="ein_on1">
+                                                <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                <field name="OID">opendtu.0.114183161076.power_control.power_on</field>
+                                                <field name="WITH_DELAY">FALSE</field>
+                                                <value name="VALUE">
+                                                  <block type="logic_boolean" id="b2">
+                                                    <field name="BOOL">TRUE</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="control" id="ein_plug1" disabled-reasons="MANUALLY_DISABLED">
+                                                    <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                    <field name="OID">sonoff.0.HM600_AUTO_PLUG.POWER</field>
+                                                    <field name="WITH_DELAY">FALSE</field>
+                                                    <value name="VALUE">
+                                                      <block type="logic_boolean" id="b3">
+                                                        <field name="BOOL">TRUE</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+                                                      <block type="variables_set" id="reset_ein_flag_after">
+                                                        <field name="VAR" id="var_ein_laeuft">einschaltLaeuft</field>
+                                                        <value name="VALUE">
+                                                          <block type="logic_boolean" id="reset_ein_flag_afterb">
+                                                            <field name="BOOL">FALSE</field>
+                                                          </block>
+                                                        </value>
+                                                        <next>
+                                                          <block type="control" id="ein_off1">
+                                                            <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                            <field name="OID">opendtu.0.114183161076.power_control.power_off</field>
+                                                            <field name="WITH_DELAY">FALSE</field>
+                                                            <value name="VALUE">
+                                                              <block type="logic_boolean" id="b1">
+                                                                <field name="BOOL">FALSE</field>
+                                                              </block>
+                                                            </value>
+                                                          </block>
+                                                        </next>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </statement>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                    <statement name="ELSE">
+                      <block type="timeouts_cleartimeout" id="clear_ein1">
+                        <field name="NAME">einschaltTimer</field>
+                        <next>
+                          <block type="variables_set" id="reset_ein_flag">
+                            <field name="VAR" id="var_ein_laeuft">einschaltLaeuft</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="reset_ein_flagb">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="controls_if" id="if_aus_check">
+                                <value name="IF0">
+                                  <block type="logic_compare" id="cmp_aus_check">
+                                    <field name="OP">EQ</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="get_aus_check">
+                                        <field name="VAR" id="var_aus_laeuft">ausschaltLaeuft</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="logic_boolean" id="bool_false_check2">
+                                        <field name="BOOL">FALSE</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <statement name="DO0">
+                                  <block type="variables_set" id="set_aus_flag">
+                                    <field name="VAR" id="var_aus_laeuft">ausschaltLaeuft</field>
+                                    <value name="VALUE">
+                                      <block type="logic_boolean" id="set_aus_flagb">
+                                        <field name="BOOL">TRUE</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="timeouts_settimeout" id="timeout_aus">
+                                        <field name="NAME">ausschaltTimer</field>
+                                        <field name="DELAY">5</field>
+                                        <field name="UNIT">min</field>
+                                        <statement name="STATEMENT">
+                                          <block type="telegram" id="tpqcP|41,@!/KKi-R`:%">
+                                            <field name="INSTANCE"></field>
+                                            <field name="LOG"></field>
+                                            <field name="SILENT">FALSE</field>
+                                            <field name="PARSEMODE">default</field>
+                                            <field name="ESCAPING">FALSE</field>
+                                            <field name="DISABLE_WEB_PAGE_PREVIEW">FALSE</field>
+                                            <value name="MESSAGE">
+                                              <shadow type="text" id="Y(x|Vf6Fo!-v[6*pOvU^">
+                                                <field name="TEXT">text</field>
+                                              </shadow>
+                                              <block type="get_value" id="lM$6SbS_`$1(YV#?QrB/">
+                                                <field name="ATTR">val</field>
+                                                <field name="OID">0_userdata.0.solar.solar_panele_netzwerk_gesamt</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="control" id="aus_off1">
+                                                <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                <field name="OID">opendtu.0.114183161076.power_control.power_off</field>
+                                                <field name="WITH_DELAY">FALSE</field>
+                                                <value name="VALUE">
+                                                  <block type="logic_boolean" id="b4">
+                                                    <field name="BOOL">TRUE</field>
+                                                  </block>
+                                                </value>
+                                                <next>
+                                                  <block type="control" id="aus_on1">
+                                                    <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                    <field name="OID">opendtu.0.114183161076.power_control.power_on</field>
+                                                    <field name="WITH_DELAY">FALSE</field>
+                                                    <value name="VALUE">
+                                                      <block type="logic_boolean" id="b5">
+                                                        <field name="BOOL">FALSE</field>
+                                                      </block>
+                                                    </value>
+                                                    <next>
+                                                      <block type="control" id="aus_plug1" disabled-reasons="MANUALLY_DISABLED">
+                                                        <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                                        <field name="OID">sonoff.0.HM600_AUTO_PLUG.POWER</field>
+                                                        <field name="WITH_DELAY">FALSE</field>
+                                                        <value name="VALUE">
+                                                          <block type="logic_boolean" id="b6">
+                                                            <field name="BOOL">FALSE</field>
+                                                          </block>
+                                                        </value>
+                                                        <next>
+                                                          <block type="variables_set" id="reset_aus_flag_after">
+                                                            <field name="VAR" id="var_aus_laeuft">ausschaltLaeuft</field>
+                                                            <value name="VALUE">
+                                                              <block type="logic_boolean" id="reset_aus_flag_afterb">
+                                                                <field name="BOOL">FALSE</field>
+                                                              </block>
+                                                            </value>
+                                                          </block>
+                                                        </next>
+                                                      </block>
+                                                    </next>
+                                                  </block>
+                                                </next>
+                                              </block>
+                                            </next>
+                                          </block>
+                                        </statement>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </statement>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </statement>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>
