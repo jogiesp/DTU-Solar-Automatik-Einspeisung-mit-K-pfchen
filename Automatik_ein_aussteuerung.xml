@@ -1,0 +1,118 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <variables>
+    <variable type="timeout" id="sicherheitsEinschaltTimer">sicherheitsEinschaltTimer</variable>
+  </variables>
+  <block type="comment" id="comment_top" x="-487" y="-112">
+    <field name="COMMENT">Automatisches einspeisen skriptsteuerung + 6min Sicherheits-Failsafe (Fix2: Timer im richtigen Zweig)</field>
+    <next>
+      <block type="on_ext" id="trigger_volt">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" items="1"></mutation>
+        <field name="CONDITION">any</field>
+        <field name="ACK_CONDITION"></field>
+        <value name="OID0">
+          <shadow type="field_oid" id="oid_volt">
+            <field name="oid">0_userdata.0.solar.redodeo_single_volt</field>
+          </shadow>
+        </value>
+        <statement name="STATEMENT">
+          <block type="controls_if" id="if_volt">
+            <mutation else="1"></mutation>
+            <value name="IF0">
+              <block type="logic_compare" id="cmp_volt">
+                <field name="OP">LT</field>
+                <value name="A">
+                  <block type="get_value" id="gv_volt">
+                    <field name="ATTR">val</field>
+                    <field name="OID">0_userdata.0.solar.redodeo_single_volt</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="math_number" id="num_136">
+                    <field name="NUM">13.6</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="timeouts_cleartimeout" id="clear_on_enable">
+                <field name="NAME">sicherheitsEinschaltTimer</field>
+                <next>
+                  <block type="control" id="enable_script" disabled-reasons="MANUALLY_DISABLED">
+                    <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                    <field name="OID">javascript.0.scriptEnabled.home_jogi.Solar.Automatik_einschalten</field>
+                    <field name="WITH_DELAY">FALSE</field>
+                    <value name="VALUE">
+                      <block type="logic_boolean" id="enable_scriptb">
+                        <field name="BOOL">TRUE</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="control" id="disable_script">
+                <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                <field name="OID">javascript.0.scriptEnabled.home_jogi.Solar.Automatik_einschalten</field>
+                <field name="WITH_DELAY">FALSE</field>
+                <value name="VALUE">
+                  <block type="logic_boolean" id="disable_scriptb">
+                    <field name="BOOL">FALSE</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="timeouts_cleartimeout" id="clear_before_set">
+                    <field name="NAME">sicherheitsEinschaltTimer</field>
+                    <next>
+                      <block type="timeouts_settimeout" id="timeout_sicherheit">
+                        <field name="NAME">sicherheitsEinschaltTimer</field>
+                        <field name="DELAY">7</field>
+                        <field name="UNIT">min</field>
+                        <statement name="STATEMENT">
+                          <block type="control" id="failsafe_off">
+                            <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                            <field name="OID">opendtu.0.114183161076.power_control.power_off</field>
+                            <field name="WITH_DELAY">FALSE</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="fb1">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="control" id="failsafe_on">
+                                <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                <field name="OID">opendtu.0.114183161076.power_control.power_on</field>
+                                <field name="WITH_DELAY">FALSE</field>
+                                <value name="VALUE">
+                                  <block type="logic_boolean" id="fb2">
+                                    <field name="BOOL">TRUE</field>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="control" id="failsafe_plug">
+                                    <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                                    <field name="OID">sonoff.0.HM600_AUTO_PLUG.POWER</field>
+                                    <field name="WITH_DELAY">FALSE</field>
+                                    <value name="VALUE">
+                                      <block type="logic_boolean" id="fb3">
+                                        <field name="BOOL">TRUE</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>
